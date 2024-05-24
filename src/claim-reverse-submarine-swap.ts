@@ -50,7 +50,6 @@ export const claimReverseSubmarineSwap = async ({
   const zkp = await zkpInit()
   init(zkp)
 
-    throw Error(`${keyPair.privateKey.toString("hex")} ${JSON.stringify(boltzPublicKey)} ${JSON.stringify(zkp)}`)
   
 
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
@@ -62,6 +61,9 @@ export const claimReverseSubmarineSwap = async ({
   const swapOutput = detectSwap(tweakedKey, lockupTx)
 
   if (swapOutput === undefined) throw Error('No swap output found in lockup transaction')
+
+
+  throw Error(`${JSON.stringify(tweakedKey)} ${JSON.stringify(lockupTx)} ${JSON.stringify(swapOutput)}`)
 
   const decodedAddress = decodeLiquidAddress(address, network)
   const liquidClaimDetails = [
