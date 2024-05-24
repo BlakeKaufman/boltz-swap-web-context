@@ -50,8 +50,6 @@ export const claimReverseSubmarineSwap = async ({
   const zkp = await zkpInit()
   init(zkp)
 
-  
-
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
   const musig = new Musig(zkp, keyPair, randomBytes(SESSION_ID_BYTES), [boltzPublicKey, keyPair.publicKey])
   const tweakedKey = LiquidTaprootUtils.tweakMusig(musig, SwapTreeSerializer.deserializeSwapTree(swapTree).tree)
@@ -62,8 +60,6 @@ export const claimReverseSubmarineSwap = async ({
 
   if (swapOutput === undefined) throw Error('No swap output found in lockup transaction')
 
-
-  throw Error(`${JSON.stringify(tweakedKey)} ${JSON.stringify(lockupTx)} ${JSON.stringify(swapOutput)}`)
 
   const decodedAddress = decodeLiquidAddress(address, network)
   const liquidClaimDetails = [
@@ -77,6 +73,8 @@ export const claimReverseSubmarineSwap = async ({
       txHash: lockupTx.getHash(),
     },
   ]
+
+  throw Error(`${JSON.stringify(decodedAddress)} ${JSON.stringify(liquidClaimDetails)}`)
   // Create a claim transaction to be signed cooperatively via a key path spend
   const claimTx = targetFee(feeRate, (fee: number) =>
     constructClaimTransaction(
