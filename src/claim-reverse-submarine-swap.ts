@@ -49,7 +49,8 @@ export const claimReverseSubmarineSwap = async ({
 
   const zkp = await zkpInit()
   init(zkp)
-throw Error('IS WORKING')
+
+  throw Error(`${keyPair} ${boltzPublicKey} ${zkp}`)
   
 
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
