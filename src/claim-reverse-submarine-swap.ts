@@ -74,7 +74,7 @@ export const claimReverseSubmarineSwap = async ({
     },
   ]
 
-  console.log(liquidClaimDetails)
+  throw Error(JSON.stringify(liquidClaimDetails))
   // Create a claim transaction to be signed cooperatively via a key path spend
   const claimTx = targetFee(feeRate, (fee: number) =>
     constructClaimTransaction(
