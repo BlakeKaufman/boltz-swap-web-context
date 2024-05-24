@@ -85,7 +85,7 @@ export const claimReverseSubmarineSwap = async ({
     )
   )
 
-  throw Error(`${JSON.stringify(claimTx.toHex())}`)
+  if (!claimTx.toHex()) throw Error('No claim TX created')
   // Get the partial signature from Boltz
   const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
     index: 0,
