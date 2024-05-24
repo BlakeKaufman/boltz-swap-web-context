@@ -73,6 +73,8 @@ export const claimReverseSubmarineSwap = async ({
       txHash: lockupTx.getHash(),
     },
   ]
+
+  console.log(liquidClaimDetails)
   // Create a claim transaction to be signed cooperatively via a key path spend
   const claimTx = targetFee(feeRate, (fee: number) =>
     constructClaimTransaction(
