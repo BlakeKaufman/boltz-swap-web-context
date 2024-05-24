@@ -73,8 +73,6 @@ export const claimReverseSubmarineSwap = async ({
       txHash: lockupTx.getHash(),
     },
   ]
-
-  throw Error(`${JSON.stringify(decodedAddress)} ${JSON.stringify(liquidClaimDetails)}`)
   // Create a claim transaction to be signed cooperatively via a key path spend
   const claimTx = targetFee(feeRate, (fee: number) =>
     constructClaimTransaction(
@@ -87,6 +85,7 @@ export const claimReverseSubmarineSwap = async ({
     )
   )
 
+  throw Error(`${JSON.stringify(claimTx.toHex())}`)
   // Get the partial signature from Boltz
   const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
     index: 0,
