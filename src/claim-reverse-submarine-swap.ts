@@ -47,7 +47,6 @@ export const claimReverseSubmarineSwap = async ({
   })
   const boltzPublicKey = Buffer.from(refundPublicKey, 'hex')
 
-
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
   const musig = new Musig(await zkpInit(), keyPair, randomBytes(SESSION_ID_BYTES), [boltzPublicKey, keyPair.publicKey])
   const tweakedKey = LiquidTaprootUtils.tweakMusig(musig, SwapTreeSerializer.deserializeSwapTree(swapTree).tree)
@@ -56,10 +55,12 @@ export const claimReverseSubmarineSwap = async ({
   const lockupTx = LiquidTransaction.fromHex(swapStatus.transaction.hex)
   const swapOutput = detectSwap(tweakedKey, lockupTx)
 
+  window.ReactNativeWebView.postMessage(JSON.stringify(swapOutput))
+
   if (swapOutput === undefined) throw Error('No swap output found in lockup transaction')
 
-
   const decodedAddress = decodeLiquidAddress(address, network)
+  window.ReactNativeWebView.postMessage(JSON.stringify(decodedAddress))
   const liquidClaimDetails = [
     {
       ...swapOutput,
@@ -72,7 +73,7 @@ export const claimReverseSubmarineSwap = async ({
     },
   ]
 
-  // Create a claim transaction to be signed cooperatively via a key path spend
+  window.ReactNativeWebView.postMessage(JSON.stringify(liquidClaimDetails)) // Create a claim transaction to be signed cooperatively via a key path spend
   const claimTx = targetFee(feeRate, (fee: number) =>
     constructClaimTransaction(
       liquidClaimDetails,
@@ -83,6 +84,8 @@ export const claimReverseSubmarineSwap = async ({
       decodedAddress.blindingKey
     )
   )
+
+  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx))
 
   if (!claimTx.toHex()) throw Error('No claim TX created')
   // Get the partial signature from Boltz
