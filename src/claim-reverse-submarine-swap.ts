@@ -47,8 +47,11 @@ export const claimReverseSubmarineSwap = async ({
   })
   const boltzPublicKey = Buffer.from(refundPublicKey, 'hex')
 
+  const zkp = await zkpInit()
+  init(zkp)
+
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
-  const musig = new Musig(await zkpInit(), keyPair, randomBytes(SESSION_ID_BYTES), [boltzPublicKey, keyPair.publicKey])
+  const musig = new Musig(zkp, keyPair, randomBytes(SESSION_ID_BYTES), [boltzPublicKey, keyPair.publicKey])
   const tweakedKey = LiquidTaprootUtils.tweakMusig(musig, SwapTreeSerializer.deserializeSwapTree(swapTree).tree)
 
   // Parse the lockup transaction and find the output relevant for the swap
