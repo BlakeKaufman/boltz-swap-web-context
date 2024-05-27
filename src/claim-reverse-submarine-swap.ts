@@ -47,14 +47,23 @@ export const claimReverseSubmarineSwap = async ({
   })
   const boltzPublicKey = Buffer.from(refundPublicKey, 'hex')
 
+  const zkp = await zkpInit()
+  init(zkp)
+
+  window.ReactNativeWebView.postMessage(JSON.stringify(zkp))
+
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
-  const musig = new Musig(await zkpInit(), keyPair, randomBytes(SESSION_ID_BYTES), [boltzPublicKey, keyPair.publicKey])
+  const musig = new Musig(zkp, keyPair, randomBytes(SESSION_ID_BYTES), [boltzPublicKey, keyPair.publicKey])
   const tweakedKey = LiquidTaprootUtils.tweakMusig(musig, SwapTreeSerializer.deserializeSwapTree(swapTree).tree)
 
+
+  window.ReactNativeWebView.postMessage(JSON.stringify(musig))
+  window.ReactNativeWebView.postMessage(JSON.stringify(tweakedKey))
   // Parse the lockup transaction and find the output relevant for the swap
   const lockupTx = LiquidTransaction.fromHex(swapStatus.transaction.hex)
   const swapOutput = detectSwap(tweakedKey, lockupTx)
 
+  window.ReactNativeWebView.postMessage(JSON.stringify(lockupTx))
   window.ReactNativeWebView.postMessage(JSON.stringify(swapOutput))
 
   if (swapOutput === undefined) throw Error('No swap output found in lockup transaction')
