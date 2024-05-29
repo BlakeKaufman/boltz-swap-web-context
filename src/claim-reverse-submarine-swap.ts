@@ -45,12 +45,13 @@ export const claimReverseSubmarineSwap = async ({
   if (!swapStatus.transaction?.hex) throw Error('LOCK_TRANSACTION_MISSING')
   init(await zkpInit())
 
+  window.ReactNativeWebView.postMessage(JSON.stringify(network))
   const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), {
     network,
   })
   const boltzPublicKey = Buffer.from(refundPublicKey, 'hex')
 
-  window.ReactNativeWebView.postMessage(JSON.stringify(keyPair.privateKey))
+  window.ReactNativeWebView.postMessage(JSON.stringify(keyPair.privateKey.toString('hex')))
   window.ReactNativeWebView.postMessage(JSON.stringify(swapStatus))
 
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
@@ -79,12 +80,12 @@ export const claimReverseSubmarineSwap = async ({
       cooperative: true,
       type: OutputType.Taproot,
       txHash: lockupTx.getHash(),
-      blindingPrivateKey: swapInfo.blindingKey ? Buffer.from(swapInfo.blindingKey, 'hex') : undefined,
+      blindingPrivateKey: Buffer.from(swapInfo.blindingKey, 'hex'),
     },
   ]
 
   window.ReactNativeWebView.postMessage(JSON.stringify(liquidClaimDetails)) // Create a claim transaction to be signed cooperatively via a key path spend
-  const claimTx = targetFee(feeRate, (fee: number) =>
+  const claimTx = targetFee(0.11, (fee: number) =>
     constructClaimTransaction(
       liquidClaimDetails,
       addressLib.toOutputScript(address, network),
