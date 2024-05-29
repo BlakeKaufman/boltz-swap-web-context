@@ -27,6 +27,8 @@ export type ClaimReverseSubmarineSwapProps = {
 
   /** hex encoded */
   preimage: string
+
+  swapStatusTx: string
 }
 
 export const claimReverseSubmarineSwap = async ({
@@ -37,12 +39,13 @@ export const claimReverseSubmarineSwap = async ({
   preimage,
   apiUrl,
   network: networkId,
+  swapStatusTx,
 }: ClaimReverseSubmarineSwapProps) => {
   const { id, refundPublicKey, swapTree } = swapInfo
-  const swapStatus = await getSwapStatus(id, apiUrl)
+  // const swapStatus = await getSwapStatus(id, apiUrl)
   const network = getNetwork(networkId)
   if (!refundPublicKey || !swapTree) throw Error('GENERAL_ERROR')
-  if (!swapStatus.transaction?.hex) throw Error('LOCK_TRANSACTION_MISSING')
+  // if (!swapStatus.transaction?.hex) throw Error('LOCK_TRANSACTION_MISSING')
   init(await zkpInit())
 
   window.ReactNativeWebView.postMessage(JSON.stringify(network))
@@ -52,7 +55,7 @@ export const claimReverseSubmarineSwap = async ({
   const boltzPublicKey = Buffer.from(refundPublicKey, 'hex')
 
   window.ReactNativeWebView.postMessage(JSON.stringify(keyPair.privateKey.toString('hex')))
-  window.ReactNativeWebView.postMessage(JSON.stringify(swapStatus))
+  window.ReactNativeWebView.postMessage(JSON.stringify(swapStatusTx))
 
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
   const musig = new Musig(await zkpInit(), keyPair, randomBytes(32), [boltzPublicKey, keyPair.publicKey])
@@ -62,7 +65,7 @@ export const claimReverseSubmarineSwap = async ({
   window.ReactNativeWebView.postMessage(JSON.stringify(tweakedKey))
   // Parse the lockup transaction and find the output relevant for the swap
 
-  const lockupTx = Transaction.fromHex(swapStatus.transaction.hex)
+  const lockupTx = Transaction.fromHex(swapStatusTx)
   const swapOutput = detectSwap(tweakedKey, lockupTx)
 
   window.ReactNativeWebView.postMessage(JSON.stringify(lockupTx))
