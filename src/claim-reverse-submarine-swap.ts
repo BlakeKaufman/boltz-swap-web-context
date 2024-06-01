@@ -41,17 +41,15 @@ export const claimReverseSubmarineSwap = async ({
   network: networkId,
   swapStatusTx,
 }: ClaimReverseSubmarineSwapProps) => {
+  init(await zkpInit())
   const { id, refundPublicKey, swapTree } = swapInfo
   // const swapStatus = await getSwapStatus(id, apiUrl)
   const network = getNetwork(networkId)
   if (!refundPublicKey || !swapTree) throw Error('GENERAL_ERROR')
   // if (!swapStatus.transaction?.hex) throw Error('LOCK_TRANSACTION_MISSING')
-  init(await zkpInit())
 
   window.ReactNativeWebView.postMessage(JSON.stringify(network))
-  const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), {
-    network,
-  })
+  const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'))
   const boltzPublicKey = Buffer.from(refundPublicKey, 'hex')
 
   window.ReactNativeWebView.postMessage(JSON.stringify(keyPair.privateKey.toString('hex')))
@@ -126,7 +124,6 @@ export const claimReverseSubmarineSwap = async ({
   )
 
   // Add the partial signature from Boltz
-  // musig.addPartial(boltzPublicKey, Buffer.from(boltzSig.partialSignature, 'hex'))
   musig.addPartial(boltzPublicKey, Buffer.from(boltzSig.partialSignature, 'hex'))
   // Create our partial signature
   musig.signPartial()
@@ -134,5 +131,5 @@ export const claimReverseSubmarineSwap = async ({
   // Witness of the input to the aggregated signature
   claimTx.ins[0].witness = [musig.aggregatePartials()]
 
-  return claimTx.toHex()
+  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
 }
