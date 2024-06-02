@@ -48,26 +48,17 @@ export const claimReverseSubmarineSwap = async ({
   if (!refundPublicKey || !swapTree) throw Error('GENERAL_ERROR')
   // if (!swapStatus.transaction?.hex) throw Error('LOCK_TRANSACTION_MISSING')
 
-  window.ReactNativeWebView.postMessage(JSON.stringify(network))
   const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'))
   const boltzPublicKey = Buffer.from(refundPublicKey, 'hex')
-
-  window.ReactNativeWebView.postMessage(JSON.stringify(keyPair.privateKey.toString('hex')))
-  window.ReactNativeWebView.postMessage(JSON.stringify(swapStatusTx))
 
   // Create a musig signing session and tweak it with the Taptree of the swap scripts
   const musig = new Musig(await zkpInit(), keyPair, randomBytes(32), [boltzPublicKey, keyPair.publicKey])
   const tweakedKey = TaprootUtils.tweakMusig(musig, SwapTreeSerializer.deserializeSwapTree(swapTree).tree)
 
-  window.ReactNativeWebView.postMessage(JSON.stringify(musig))
-  window.ReactNativeWebView.postMessage(JSON.stringify(tweakedKey))
   // Parse the lockup transaction and find the output relevant for the swap
 
   const lockupTx = Transaction.fromHex(swapStatusTx)
   const swapOutput = detectSwap(tweakedKey, lockupTx)
-
-  window.ReactNativeWebView.postMessage(JSON.stringify(lockupTx))
-  window.ReactNativeWebView.postMessage(JSON.stringify(swapOutput))
 
   if (swapOutput === undefined) throw Error('No swap output found in lockup transaction')
 
@@ -97,9 +88,8 @@ export const claimReverseSubmarineSwap = async ({
     )
   )
 
-  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx))
-
   if (!claimTx.toHex()) throw Error('No claim TX created')
+  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
   // Get the partial signature from Boltz
   const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
     index: 0,
@@ -108,6 +98,7 @@ export const claimReverseSubmarineSwap = async ({
     pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
   })
 
+  window.ReactNativeWebView.postMessage(JSON.stringify(boltzSig))
   // musig.aggregateNonces([[boltzPublicKey, Musig.parsePubNonce(boltzSig.pubNonce)]])
   musig.aggregateNonces([[boltzPublicKey, Buffer.from(boltzSig.pubNonce, 'hex')]])
 
