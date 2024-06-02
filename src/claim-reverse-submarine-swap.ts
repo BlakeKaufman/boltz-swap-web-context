@@ -121,9 +121,8 @@ export const claimReverseSubmarineSwap = async ({
   // Witness of the input to the aggregated signature
   claimTx.ins[0].witness = [musig.aggregatePartials()]
 
-  postFinalReverseSubmarineSwap(apiUrl, { hex: claimTx.toHex() })
-
+  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
   return claimTx.toHex()
 
-  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
+  
 }
