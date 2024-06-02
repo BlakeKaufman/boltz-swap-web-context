@@ -109,14 +109,15 @@ export const claimReverseSubmarineSwap = async ({
   //   pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
   // })
   // Get the partial signature from Boltz
-  const boltzSig = (
-    await axios.post(`${apiUrl}/v2/swap/reverse/${id}/claim`, {
-      index: 0,
-      transaction: claimTx.toHex(),
-      preimage,
-      pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
-    })
-  ).data
+  const boltzSig = { pubNonce: 'test', partialSignature: 'test' }
+  //(
+  //   await axios.post(`${apiUrl}/v2/swap/reverse/${id}/claim`, {
+  //     index: 0,
+  //     transaction: claimTx.toHex(),
+  //     preimage,
+  //     pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
+  //   })
+  // ).data
 
   window.ReactNativeWebView.postMessage(JSON.stringify('test 1'))
   // musig.aggregateNonces([[boltzPublicKey, Musig.parsePubNonce(boltzSig.pubNonce)]])
