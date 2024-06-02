@@ -94,6 +94,14 @@ export const claimReverseSubmarineSwap = async ({
   // Get the partial signature from Boltz
 
   window.ReactNativeWebView.postMessage(JSON.stringify('test 0'))
+  window.ReactNativeWebView.postMessage(
+    JSON.stringify({
+      index: 0,
+      transaction: claimTx.toHex(),
+      preimage,
+      pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
+    })
+  )
   // const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
   //   index: 0,
   //   transaction: claimTx.toHex(),
