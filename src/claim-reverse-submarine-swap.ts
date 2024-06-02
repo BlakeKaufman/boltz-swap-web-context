@@ -98,11 +98,15 @@ export const claimReverseSubmarineSwap = async ({
     pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
   })
 
+  window.ReactNativeWebView.postMessage(JSON.stringify('test 1'))
   // musig.aggregateNonces([[boltzPublicKey, Musig.parsePubNonce(boltzSig.pubNonce)]])
   musig.aggregateNonces([[boltzPublicKey, Buffer.from(boltzSig.pubNonce, 'hex')]])
 
+  window.ReactNativeWebView.postMessage(JSON.stringify('test 2'))
+
   // Initialize the session to sign the claim transaction
   // musig.initializeSession(LiquidTaprootUtils.hashForWitnessV1(network, liquidClaimDetails, claimTx, 0))
+
   musig.initializeSession(
     claimTx.hashForWitnessV1(
       0,
@@ -113,16 +117,19 @@ export const claimReverseSubmarineSwap = async ({
     )
   )
 
+  window.ReactNativeWebView.postMessage(JSON.stringify('test 3'))
+
   // Add the partial signature from Boltz
   musig.addPartial(boltzPublicKey, Buffer.from(boltzSig.partialSignature, 'hex'))
+  window.ReactNativeWebView.postMessage(JSON.stringify('test 4'))
   // Create our partial signature
   musig.signPartial()
+  window.ReactNativeWebView.postMessage(JSON.stringify('test 5'))
 
   // Witness of the input to the aggregated signature
   claimTx.ins[0].witness = [musig.aggregatePartials()]
+  window.ReactNativeWebView.postMessage(JSON.stringify('test 6'))
 
   window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
   return claimTx.toHex()
-
-  
 }
