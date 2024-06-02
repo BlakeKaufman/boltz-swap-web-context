@@ -13,6 +13,7 @@ import { ReverseResponse } from './boltz-api/types'
 import { FEE_ESTIMATION_BUFFER, SESSION_ID_BYTES } from './constants'
 import { decodeLiquidAddress } from './utils/decodeLiquidAddress'
 import { LiquidNetworkId, getNetwork } from './utils/getNetwork'
+import { postFinalReverseSubmarineSwap } from './boltz-api/postFinalReverseSubmarineSwap'
 const ECPair = ECPairFactory(ecc)
 
 export type ClaimReverseSubmarineSwapProps = {
@@ -89,7 +90,6 @@ export const claimReverseSubmarineSwap = async ({
   )
 
   if (!claimTx.toHex()) throw Error('No claim TX created')
-  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx))
   // Get the partial signature from Boltz
   const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
     index: 0,
@@ -98,7 +98,6 @@ export const claimReverseSubmarineSwap = async ({
     pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
   })
 
-  window.ReactNativeWebView.postMessage(JSON.stringify(boltzSig))
   // musig.aggregateNonces([[boltzPublicKey, Musig.parsePubNonce(boltzSig.pubNonce)]])
   musig.aggregateNonces([[boltzPublicKey, Buffer.from(boltzSig.pubNonce, 'hex')]])
 
@@ -121,6 +120,10 @@ export const claimReverseSubmarineSwap = async ({
 
   // Witness of the input to the aggregated signature
   claimTx.ins[0].witness = [musig.aggregatePartials()]
+
+  postFinalReverseSubmarineSwap(apiUrl, { hex: claimTx.toHex() })
+
+  return claimTx.toHex()
 
   window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
 }
