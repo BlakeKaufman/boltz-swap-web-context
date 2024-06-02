@@ -91,6 +91,8 @@ export const claimReverseSubmarineSwap = async ({
 
   if (!claimTx.toHex()) throw Error('No claim TX created')
   // Get the partial signature from Boltz
+  
+  window.ReactNativeWebView.postMessage(JSON.stringify('test 0'))
   const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
     index: 0,
     transaction: claimTx.toHex(),
