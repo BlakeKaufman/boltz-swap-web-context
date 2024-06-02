@@ -46,10 +46,10 @@ export const claimReverseSubmarineSwap = async ({
 }: ClaimReverseSubmarineSwapProps) => {
   init(await zkpInit())
   const { id, refundPublicKey, swapTree } = swapInfo
-  // const swapStatus = await getSwapStatus(id, apiUrl)
+  const swapStatus = await getSwapStatus(id, apiUrl)
   const network = getNetwork(networkId)
   if (!refundPublicKey || !swapTree) throw Error('GENERAL_ERROR')
-  // if (!swapStatus.transaction?.hex) throw Error('LOCK_TRANSACTION_MISSING')
+  if (!swapStatus.transaction?.hex) throw Error('LOCK_TRANSACTION_MISSING')
 
   const keyPair = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'))
   const boltzPublicKey = Buffer.from(refundPublicKey, 'hex')
@@ -60,7 +60,7 @@ export const claimReverseSubmarineSwap = async ({
 
   // Parse the lockup transaction and find the output relevant for the swap
 
-  const lockupTx = Transaction.fromHex(swapStatusTx)
+  const lockupTx = Transaction.fromHex(swapStatus)
   const swapOutput = detectSwap(tweakedKey, lockupTx)
 
   if (swapOutput === undefined) throw Error('No swap output found in lockup transaction')
