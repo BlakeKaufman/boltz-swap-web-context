@@ -13,6 +13,7 @@ import { ReverseResponse } from './boltz-api/types'
 import { FEE_ESTIMATION_BUFFER, SESSION_ID_BYTES } from './constants'
 import { decodeLiquidAddress } from './utils/decodeLiquidAddress'
 import { LiquidNetworkId, getNetwork } from './utils/getNetwork'
+import axios from 'axios'
 // import { postFinalReverseSubmarineSwap } from './boltz-api/postFinalReverseSubmarineSwap'
 const ECPair = ECPairFactory(ecc)
 
@@ -93,12 +94,21 @@ export const claimReverseSubmarineSwap = async ({
   // Get the partial signature from Boltz
 
   window.ReactNativeWebView.postMessage(JSON.stringify('test 0'))
-  const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
-    index: 0,
-    transaction: claimTx.toHex(),
-    preimage,
-    pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
-  })
+  // const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
+  //   index: 0,
+  //   transaction: claimTx.toHex(),
+  //   preimage,
+  //   pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
+  // })
+  // Get the partial signature from Boltz
+  const boltzSig = (
+    await axios.post(`${apiUrl}/v2/swap/reverse/${id}/claim`, {
+      index: 0,
+      transaction: claimTx.toHex(),
+      preimage,
+      pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
+    })
+  ).data
 
   window.ReactNativeWebView.postMessage(JSON.stringify('test 1'))
   // musig.aggregateNonces([[boltzPublicKey, Musig.parsePubNonce(boltzSig.pubNonce)]])
@@ -133,5 +143,8 @@ export const claimReverseSubmarineSwap = async ({
   window.ReactNativeWebView.postMessage(JSON.stringify('test 6'))
 
   window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
+  await axios.post(`${apiUrl}/v2/chain/L-BTC/transaction`, {
+    hex: claimTx.toHex(),
+  })
   return claimTx.toHex()
 }
