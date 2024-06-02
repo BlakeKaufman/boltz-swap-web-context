@@ -93,38 +93,15 @@ export const claimReverseSubmarineSwap = async ({
   if (!claimTx.toHex()) throw Error('No claim TX created')
   // Get the partial signature from Boltz
 
-  window.ReactNativeWebView.postMessage(JSON.stringify('test 0'))
-  window.ReactNativeWebView.postMessage(
-    JSON.stringify({
-      index: 0,
-      transaction: claimTx.toHex(),
-      preimage,
-      pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
-    })
-  )
-  // const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
-  //   index: 0,
-  //   transaction: claimTx.toHex(),
-  //   preimage,
-  //   pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
-  // })
-  // Get the partial signature from Boltz
-  let boltzSig
-  try {
-    boltzSig = (
-      await axios.post(`${apiUrl}/v2/swap/reverse/${id}/claim`, {
-        index: 0,
-        transaction: claimTx.toHex(),
-        preimage,
-        pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
-      })
-    ).data
-  } catch (error) {
-    console.error('Error during axios.post:', error)
-    window.ReactNativeWebView.postMessage(JSON.stringify(`Error: ${error.message}`))
-  }
+  window.ReactNativeWebView.postMessage(JSON.stringify('BEFORE CLAIM POST'))
+  const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
+    index: 0,
+    transaction: claimTx.toHex(),
+    preimage,
+    pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
+  })
+  window.ReactNativeWebView.postMessage(JSON.stringify('AFTER CLAIM POST'))
 
-  window.ReactNativeWebView.postMessage(JSON.stringify('test 1'))
   // musig.aggregateNonces([[boltzPublicKey, Musig.parsePubNonce(boltzSig.pubNonce)]])
   musig.aggregateNonces([[boltzPublicKey, Buffer.from(boltzSig.pubNonce, 'hex')]])
 
@@ -157,8 +134,5 @@ export const claimReverseSubmarineSwap = async ({
   window.ReactNativeWebView.postMessage(JSON.stringify('test 6'))
 
   window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
-  await axios.post(`${apiUrl}/v2/chain/L-BTC/transaction`, {
-    hex: claimTx.toHex(),
-  })
   return claimTx.toHex()
 }
