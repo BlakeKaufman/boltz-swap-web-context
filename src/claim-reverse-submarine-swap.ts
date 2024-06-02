@@ -76,7 +76,7 @@ export const claimReverseSubmarineSwap = async ({
     },
   ]
 
-  window.ReactNativeWebView.postMessage(JSON.stringify(liquidClaimDetails)) // Create a claim transaction to be signed cooperatively via a key path spend
+  // Create a claim transaction to be signed cooperatively via a key path spend
   const claimTx = targetFee(0.11, (fee: number) =>
     constructClaimTransaction(
       liquidClaimDetails,
@@ -89,7 +89,7 @@ export const claimReverseSubmarineSwap = async ({
   )
 
   if (!claimTx.toHex()) throw Error('No claim TX created')
-  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx.toHex()))
+  window.ReactNativeWebView.postMessage(JSON.stringify(claimTx))
   // Get the partial signature from Boltz
   const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
     index: 0,
