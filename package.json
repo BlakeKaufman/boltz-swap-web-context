@@ -13,6 +13,7 @@
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.1.1",
     "@vulpemventures/secp256k1-zkp": "^3.2.1",
+    "axios": "^1.7.2",
     "bolt11": "^1.4.1",
     "boltz-core": "^2.1.1",
     "buffer": "^6.0.3",
