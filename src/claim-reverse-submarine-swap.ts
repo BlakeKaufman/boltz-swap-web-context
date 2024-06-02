@@ -13,7 +13,7 @@ import { ReverseResponse } from './boltz-api/types'
 import { FEE_ESTIMATION_BUFFER, SESSION_ID_BYTES } from './constants'
 import { decodeLiquidAddress } from './utils/decodeLiquidAddress'
 import { LiquidNetworkId, getNetwork } from './utils/getNetwork'
-import { postFinalReverseSubmarineSwap } from './boltz-api/postFinalReverseSubmarineSwap'
+// import { postFinalReverseSubmarineSwap } from './boltz-api/postFinalReverseSubmarineSwap'
 const ECPair = ECPairFactory(ecc)
 
 export type ClaimReverseSubmarineSwapProps = {
@@ -91,7 +91,7 @@ export const claimReverseSubmarineSwap = async ({
 
   if (!claimTx.toHex()) throw Error('No claim TX created')
   // Get the partial signature from Boltz
-  
+
   window.ReactNativeWebView.postMessage(JSON.stringify('test 0'))
   const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
     index: 0,
