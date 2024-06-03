@@ -102,6 +102,8 @@ export const claimReverseSubmarineSwap = async ({
         preimage,
         pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
         swapStatusTx,
+        musig: musig,
+        claimTx,
       })
     )
     return
