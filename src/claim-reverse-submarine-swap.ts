@@ -13,7 +13,6 @@ import { ReverseResponse } from './boltz-api/types'
 import { FEE_ESTIMATION_BUFFER, SESSION_ID_BYTES } from './constants'
 import { decodeLiquidAddress } from './utils/decodeLiquidAddress'
 import { LiquidNetworkId, getNetwork } from './utils/getNetwork'
-// import { postFinalReverseSubmarineSwap } from './boltz-api/postFinalReverseSubmarineSwap'
 const ECPair = ECPairFactory(ecc)
 
 export type ClaimReverseSubmarineSwapProps = {
@@ -30,7 +29,6 @@ export type ClaimReverseSubmarineSwapProps = {
   preimage: string
 
   swapStatusTx: string
-  boltzSig: { pubNonce: string; partialSignature: string }
 }
 
 export const claimReverseSubmarineSwap = async ({
@@ -42,7 +40,6 @@ export const claimReverseSubmarineSwap = async ({
   apiUrl,
   network: networkId,
   swapStatusTx,
-  boltzSig,
 }: ClaimReverseSubmarineSwapProps) => {
   init(await zkpInit())
   const { id, refundPublicKey, swapTree } = swapInfo
@@ -94,27 +91,14 @@ export const claimReverseSubmarineSwap = async ({
   if (!claimTx.toHex()) throw Error('No claim TX created')
   // Get the partial signature from Boltz
 
-  if (!boltzSig) {
-    window.ReactNativeWebView.postMessage(
-      JSON.stringify({
-        index: 0,
-        transaction: claimTx.toHex(),
-        preimage,
-        pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
-        swapStatusTx,
-        musig: musig,
-        claimTx,
-      })
-    )
-    return
-  }
+  window.ReactNativeWebView.postMessage(JSON.stringify('BEFORE CLAIM POST'))
 
-  // const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
-  //   index: 0,
-  //   transaction: claimTx.toHex(),
-  //   preimage,
-  //   pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
-  // })
+  const boltzSig = await postClaimReverseSubmarineSwap(id, apiUrl, {
+    index: 0,
+    transaction: claimTx.toHex(),
+    preimage,
+    pubNonce: Buffer.from(musig.getPublicNonce()).toString('hex'),
+  })
   window.ReactNativeWebView.postMessage(JSON.stringify('AFTER CLAIM POST'))
 
   // musig.aggregateNonces([[boltzPublicKey, Musig.parsePubNonce(boltzSig.pubNonce)]])
