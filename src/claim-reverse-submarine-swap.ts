@@ -81,7 +81,7 @@ export const claimReverseSubmarineSwap = async ({
     constructClaimTransaction(
       liquidClaimDetails,
       addressLib.toOutputScript(address, network),
-      fee,
+      fee + FEE_ESTIMATION_BUFFER,
       true,
       network,
       addressLib.fromConfidential(address).blindingKey
