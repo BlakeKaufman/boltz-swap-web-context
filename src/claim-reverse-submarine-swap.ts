@@ -33,7 +33,7 @@ export type ClaimReverseSubmarineSwapProps = {
 
 export const claimReverseSubmarineSwap = async ({
   address,
-  feeRate,
+  feeRate = 0.11,
   swapInfo,
   privateKey,
   preimage,
