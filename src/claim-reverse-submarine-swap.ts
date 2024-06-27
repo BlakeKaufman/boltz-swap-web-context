@@ -33,7 +33,7 @@ export type ClaimReverseSubmarineSwapProps = {
 
 export const claimReverseSubmarineSwap = async ({
   address,
-  feeRate = 1,
+  feeRate,
   swapInfo,
   privateKey,
   preimage,
@@ -77,11 +77,11 @@ export const claimReverseSubmarineSwap = async ({
   ]
 
   // Create a claim transaction to be signed cooperatively via a key path spend
-  const claimTx = targetFee(0.11, (fee: number) =>
+  const claimTx = targetFee(feeRate, (fee: number) =>
     constructClaimTransaction(
       liquidClaimDetails,
       addressLib.toOutputScript(address, network),
-      fee + FEE_ESTIMATION_BUFFER,
+      fee,
       true,
       network,
       addressLib.fromConfidential(address).blindingKey
