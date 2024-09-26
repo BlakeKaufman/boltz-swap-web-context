@@ -52,7 +52,7 @@ window.refundSubmarineSwap = async (args: RefundSubmarineSwapProps) => {
   try {
     window.ReactNativeWebView.postMessage(
       JSON.stringify({
-        tx: await refundSubmarineSwap(args),
+        refundTx: await refundSubmarineSwap(args),
       })
     );
   } catch (e) {
