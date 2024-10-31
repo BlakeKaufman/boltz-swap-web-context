@@ -26,9 +26,12 @@ window.claimReverseSubmarineSwap = async (
   args: ClaimReverseSubmarineSwapProps
 ) => {
   try {
+    const claimResponse: { tx: string; id: string } =
+      await claimReverseSubmarineSwap(args);
     window.ReactNativeWebView.postMessage(
       JSON.stringify({
-        tx: await claimReverseSubmarineSwap(args),
+        tx: claimResponse.tx,
+        id: claimResponse.id,
       })
     );
   } catch (e) {

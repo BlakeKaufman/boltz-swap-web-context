@@ -121,5 +121,5 @@ export const claimReverseSubmarineSwap = async ({
   // Witness of the input to the aggregated signature
   claimTx.ins[0].witness = [musig.aggregatePartials()]
 
-  return claimTx.toHex()
+  return { tx: claimTx.toHex(), id: swapInfo.id }
 }
