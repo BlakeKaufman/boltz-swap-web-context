@@ -100,5 +100,5 @@ export const refundSubmarineSwap = async ({
 
   // Witness of the input to the aggregated signature
   refundTx.ins[0].witness = [musig.aggregatePartials()]
-  return refundTx.toHex()
+  return { tx: refundTx.toHex(), id: id }
 }
